@@ -1,1 +1,1 @@
-web: ./target/release/rest-api-actix-2
+web: ./target/release/try-rust-on-heroku
