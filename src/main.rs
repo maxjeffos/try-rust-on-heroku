@@ -77,9 +77,8 @@ async fn main() -> io::Result<()> {
     let port_str = env::var("PORT").unwrap_or(String::from("8000"));
     println!("using port {}", port_str);
     
-    let bind_address = format!("127.0.0.1:{}", port_str);
+    let bind_address = format!("0.0.0.0:{}", port_str);
     println!("using bind_address {}", bind_address);
-
     
     env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
     env_logger::init();
