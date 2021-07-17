@@ -65,6 +65,13 @@ async fn hello_simple(session: Session, req: HttpRequest) -> HttpResponse {
         .body(format!("Hello!"))
 }
 
+/// Default Route
+async fn default_page(session: Session, req: HttpRequest) -> HttpResponse {
+    HttpResponse::Ok()
+        .content_type("text/plain")
+        .body(format!("Hello!"))
+}
+
 #[actix_web::main]
 async fn main() -> io::Result<()> {
     let port_str = env::var("PORT").unwrap_or(String::from("8000"));
@@ -89,7 +96,7 @@ async fn main() -> io::Result<()> {
             .service(welcome)
             // with path parameters
             .service(web::resource("/user/{name}").route(web::get().to(with_param)))
-            .service(web::resource("/test").route(web::get().to(hello_simple)))
+            .service(web::resource("/").route(web::get().to(default_page)))
             // async response body
             // .service(web::resource("/async-body/{name}").route(web::get().to(response_body)))
             .service(
@@ -107,13 +114,15 @@ async fn main() -> io::Result<()> {
             }))
             // static files
             .service(fs::Files::new("/static", "static").show_files_listing())
+            
             // redirect
-            .service(web::resource("/").route(web::get().to(|req: HttpRequest| {
-                println!("{:?}", req);
-                HttpResponse::Found()
-                    .header(header::LOCATION, "static/welcome.html")
-                    .finish()
-            })))
+            // .service(web::resource("/").route(web::get().to(|req: HttpRequest| {
+            //     println!("{:?}", req);
+            //     HttpResponse::Found()
+            //         .header(header::LOCATION, "static/welcome.html")
+            //         .finish()
+            // })))
+            
             // default
             .default_service(
                 // 404 for GET request
