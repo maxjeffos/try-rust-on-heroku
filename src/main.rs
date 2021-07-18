@@ -76,10 +76,10 @@ async fn default_page(session: Session, req: HttpRequest) -> HttpResponse {
 async fn main() -> io::Result<()> {
     let port_str = env::var("PORT").unwrap_or(String::from("8000"));
     println!("using port {}", port_str);
-    
+
     let bind_address = format!("0.0.0.0:{}", port_str);
     println!("using bind_address {}", bind_address);
-    
+
     env::set_var("RUST_LOG", "actix_web=debug,actix_server=info");
     env_logger::init();
 
@@ -113,7 +113,6 @@ async fn main() -> io::Result<()> {
             }))
             // static files
             .service(fs::Files::new("/static", "static").show_files_listing())
-            
             // redirect
             // .service(web::resource("/").route(web::get().to(|req: HttpRequest| {
             //     println!("{:?}", req);
@@ -121,7 +120,6 @@ async fn main() -> io::Result<()> {
             //         .header(header::LOCATION, "static/welcome.html")
             //         .finish()
             // })))
-            
             // default
             .default_service(
                 // 404 for GET request

@@ -1,0 +1,41 @@
+name: Release to GH Releases
+
+on: [push]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Show environment
+      run: cargo --version
+
+    - name: Run checks
+      run: cargo fmt -- --check
+
+    - name: Run tests
+      run: cargo test --verbose
+
+    - name: Add target
+      run: rustup target add aarch64-unknown-linux-gnu
+
+    - name: Install Linker
+      run: |
+        sudo apt-get update
+        sudo apt-get install --yes gcc-aarch64-linux-gnu
+
+    - name: Build for ARM Linux
+      run: cargo build --release --target aarch64-unknown-linux-gnu
+
+    - name: Create GitHub Release
+      run: | 
+        tag_name=dev-$(echo ${GITHUB_SHA} | cut -c1-8)
+        git tag $tag_name
+        gh release create --prerelease $tag_name
+        gh release upload $tag_name ./target/aarch64-unknown-linux-gnu/release/try-rust-on-heroku
+      env:
+        GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
